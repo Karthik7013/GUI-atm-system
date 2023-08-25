@@ -1,22 +1,16 @@
 
-
-
 # Hi, I'm Karthik 👋
 
-# Task Management Application
-
-Simple Task Management Web Application using React for the front-end and node-expresss for back-end  allowing user to create a task and update task and delete a task from the list of tasks.
-
-
+# ATM Management Application
+ This project is based on graphical user interface (GUI-Tkinter). It uses a simple database file approach to save and retrive user information.
 ## Technologies
 
-**Client:** React
+ <img width="50px" src="https://ik.imagekit.io/ybyfbcvb8/python.png?updatedAt=1692968478421"/>  <img width="50px" src="https://ik.imagekit.io/ybyfbcvb8/62c46cd2a75b8945b1696713.png?updatedAt=1692968811131"/>
 
-**Server:** Node, Express.
 
 ## Screenshots
 
-![App Screenshot](https://ik.imagekit.io/ybyfbcvb8/React%20App%20-%20Google%20Chrome%2024-08-2023%2017_52_04.png?updatedAt=1692880437560)
+![App Screenshot](https://ik.imagekit.io/ybyfbcvb8/SBI%20_%20HOME%20%2025-08-2023%2017_42_04.png?updatedAt=1692966101570)
 
 
 
@@ -24,48 +18,14 @@ Simple Task Management Web Application using React for the front-end and node-ex
 
 - Download the zip file 
 - extract zip to desktop
-- terminal run npm install to install all the dependencies
-- To RUN APP "yarn dev"
-- frontend runs on localhost port 3000
-- backend server run on localhost  port 5000
-- backend serves  data.json file on making getRequest
-- by using axios third party library in react fetching the data from data.json file locally.
-- serving it on front end by iteration the array objects (each Tasks);
-- on submit making a post request to add the task to the data.json file
-- on delete makin a delete request to delete the task from the data.json file
-- on update making a update reques to update the task from the data.json file
-  
-## To stop the Server
-cmd : ctrl+c
+- make sure to install python in your machine
+- run the main.py file to start the project
+- login page will open first click on create new account and create and account
+- use the credentials to login.
+- now you can perform simple task like withdraw money-transfer and balance-enquery and deposite pinchange
 
-
-
-
-
-
-////////////////////////////
-
-
-
-
-
-======================   ATM MANAGEMENT SYSTEM   =========================
-
-Developed By:
-
---------------------------------
-    	 KARTHIK TUMALA
---------------------------------
-
-
-Programming Language:
-
---------------------------------
-     Python
---------------------------------
 
 Modules Used:
-
 --------------------------------------------------
 Tkinter - For Graphical user interface (GUI).
 
@@ -78,39 +38,21 @@ PIL - For loading images and icons to project.
 Datetime - For knowing the Transactions details.
 
 time - For Stopping execution for some time(sleep).
----------------------------------------------------
 
 
-
------------
-  Abstract
------------
-
-    ATM MANAGEMENT SYSTEM is a structure that provides a simple set-up of programs for user enrollment and validate Login credentials and perform basic ATM Operations.
-
+  How it Works ?
 ---------------
-  Description
----------------
+This project consist of 2 forms (main.py and Signup_app.py) which redirect main.py <=> Signup_app.py by (Circular import).
 
-   This project is based on graphical user interface (GUI-Tkinter). It uses a simple database file(sbi.db)approach to save and retrive user information.This project consist of 2 forms (main.py) and (Signup_app.py)which redirect main.py <=> Signup_app.py by (Circular import).
-
----------------
-  Key Features
----------------
-
-* main Form:
-
+* main.py:
   * Checking for login credentials in Database file(sbi.db)
   * Withdraw Operations
   * Balance Enquiry
   * Pinchange
   * Deposite Money
   * Transfer Money to A/c
-   
-* SignUp_app Form:
-
-  * Creating a NewAccount into database file
+* signup_app.py:
+  * Creating a NewAccount into database file sbi.db
   * Strong Password Validation
-  * 
 
      
