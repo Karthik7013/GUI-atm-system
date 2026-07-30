@@ -1,0 +1,9 @@
+2026-07-30 13:51:59 - audit - INFO - New user registered: 100002
+2026-07-30 13:51:59 - audit - INFO - User logged in successfully: 100002
+2026-07-30 13:51:59 - audit - INFO - Balance checked for user_id: 2
+2026-07-30 13:51:59 - audit - INFO - Deposit: 500 ₹ to user_id: 2
+2026-07-30 13:51:59 - audit - INFO - Withdrawal: 200 ₹ from user_id: 2
+2026-07-30 13:52:00 - audit - INFO - New user registered: 100003
+2026-07-30 13:52:00 - audit - INFO - Transfer: 300 ₹ from 100002 to 100003
+2026-07-30 13:52:00 - audit - INFO - PIN changed successfully for user_id: 2
+2026-07-30 13:52:00 - audit - INFO - User logged in successfully: 100002
