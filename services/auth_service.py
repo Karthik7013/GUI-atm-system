@@ -6,7 +6,8 @@ from utils import (
     AuthenticationError,
     ValidationError,
     DuplicateAccountError,
-    audit_logger
+    audit_logger,
+    verify_pin
 )
 
 
@@ -60,6 +61,9 @@ class AuthService:
         if initial_balance < 0:
             raise ValidationError("Initial balance cannot be negative")
 
+        if initial_balance < 100:
+            raise ValidationError("Minimum initial balance is 100")
+
         account_number = self.user_repo.get_next_account_number()
 
         user_id = self.user_repo.create_user(
@@ -97,7 +101,6 @@ class AuthService:
         if not user:
             raise ValidationError("User not found")
 
-        from utils.security import verify_pin
         if not verify_pin(old_pin, user['pin_hash']):
             audit_logger.warning(f"Failed PIN change attempt for user_id: {user_id}")
             raise AuthenticationError("Current PIN is incorrect")

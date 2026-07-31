@@ -111,8 +111,6 @@ class LoginWindow:
         app = RegistrationWindow(root)
 
     def _open_service_window(self):
-        self.user_window = Toplevel(self.root)
-        self.user_window.destroy()
         self.root.withdraw()
         ServiceWindow(self.root, self.current_user, self.transaction_service, self.account_service)
 
@@ -247,7 +245,7 @@ class ServiceWindow:
                 f"Click YES to keep showing, NO to return"
             )
             if not confirm:
-                self._handle_exit()
+                self._return_to_service()
         except AtmException as e:
             MessageDialog.show_error(f"{config.BANK_SHORT} | ERROR", e.message)
 
@@ -358,18 +356,28 @@ class WithdrawWindow:
             return
 
         try:
-            result = self.transaction_service.withdraw(self.user_data['id'], int(amount))
+            amount_int = int(amount)
+        except ValueError:
+            MessageDialog.show_error(f"{config.BANK_SHORT} | ERROR", "Invalid amount entered")
+            self.amount_entry.delete(0, END)
+            return
+
+        try:
             confirm = ConfirmDialog.ask_yes_no(
                 f"{config.BANK_SHORT} | CONFIRM",
-                f"Confirm withdrawal of ₹{amount}?\n\nNew Balance: ₹{result['new_balance']:.2f}"
+                f"Confirm withdrawal of ₹{amount_int}?"
             )
-            if confirm:
-                MessageDialog.show_info(
-                    f"{config.BANK_SHORT} | SUCCESS",
-                    f"Withdrawal successful!\n\nAmount: ₹{amount}\nBalance: ₹{result['new_balance']:.2f}"
-                )
-                self.window.destroy()
-                self.on_success()
+            if not confirm:
+                self.amount_entry.delete(0, END)
+                return
+
+            result = self.transaction_service.withdraw(self.user_data['id'], amount_int)
+            MessageDialog.show_info(
+                f"{config.BANK_SHORT} | SUCCESS",
+                f"Withdrawal successful!\n\nAmount: ₹{amount_int}\nBalance: ₹{result['new_balance']:.2f}"
+            )
+            self.window.destroy()
+            self.on_success()
         except (ValidationError, InsufficientFundsError) as e:
             MessageDialog.show_error(f"{config.BANK_SHORT} | ERROR", e.message)
             self.amount_entry.delete(0, END)
@@ -461,18 +469,28 @@ class DepositWindow:
             return
 
         try:
-            result = self.transaction_service.deposit(self.user_data['id'], int(amount))
+            amount_int = int(amount)
+        except ValueError:
+            MessageDialog.show_error(f"{config.BANK_SHORT} | ERROR", "Invalid amount entered")
+            self.amount_entry.delete(0, END)
+            return
+
+        try:
             confirm = ConfirmDialog.ask_yes_no(
                 f"{config.BANK_SHORT} | CONFIRM",
-                f"Confirm deposit of ₹{amount}?"
+                f"Confirm deposit of ₹{amount_int}?"
             )
-            if confirm:
-                MessageDialog.show_info(
-                    f"{config.BANK_SHORT} | SUCCESS",
-                    f"Deposit successful!\n\nAmount: ₹{amount}\nNew Balance: ₹{result['new_balance']:.2f}"
-                )
-                self.window.destroy()
-                self.on_success()
+            if not confirm:
+                self.amount_entry.delete(0, END)
+                return
+
+            result = self.transaction_service.deposit(self.user_data['id'], amount_int)
+            MessageDialog.show_info(
+                f"{config.BANK_SHORT} | SUCCESS",
+                f"Deposit successful!\n\nAmount: ₹{amount_int}\nNew Balance: ₹{result['new_balance']:.2f}"
+            )
+            self.window.destroy()
+            self.on_success()
         except (ValidationError, Exception) as e:
             MessageDialog.show_error(f"{config.BANK_SHORT} | ERROR", str(e))
             self.amount_entry.delete(0, END)
@@ -662,40 +680,48 @@ class TransferWindow:
 
     def _handle_transfer(self):
         recipient = self.recipient_entry.get().strip()
-        confirm = self.confirm_entry.get().strip()
+        confirm_acct = self.confirm_entry.get().strip()
         amount = self.amount_entry.get().strip()
 
-        if not recipient or not confirm or not amount:
+        if not recipient or not confirm_acct or not amount:
             MessageDialog.show_error(f"{config.BANK_SHORT} | ERROR", "All fields are required")
             return
 
-        if recipient != confirm:
+        if recipient != confirm_acct:
             MessageDialog.show_error(f"{config.BANK_SHORT} | ERROR", "Account numbers do not match")
             self._clear_fields()
             return
 
         try:
+            amount_int = int(amount)
+        except ValueError:
+            MessageDialog.show_error(f"{config.BANK_SHORT} | ERROR", "Invalid amount")
+            self._clear_fields()
+            return
+
+        try:
+            confirm_dialog = ConfirmDialog.ask_yes_no(
+                f"{config.BANK_SHORT} | CONFIRM",
+                f"Transfer ₹{amount_int} to account {recipient}?"
+            )
+            if not confirm_dialog:
+                self._clear_fields()
+                return
+
             result = self.transaction_service.transfer(
                 self.user_data['id'],
                 recipient,
-                int(amount)
+                amount_int
             )
-            confirm_dialog = ConfirmDialog.ask_yes_no(
-                f"{config.BANK_SHORT} | CONFIRM",
-                f"Transfer ₹{amount} to account {recipient}?\n\n"
-                f"Recipient: {result['recipient']}\n"
-                f"New Balance: ₹{result['new_balance']:.2f}"
+            MessageDialog.show_info(
+                f"{config.BANK_SHORT} | SUCCESS",
+                f"Transfer successful!\n\n"
+                f"Amount: ₹{amount_int}\n"
+                f"To: {result['recipient']}\n"
+                f"Balance: ₹{result['new_balance']:.2f}"
             )
-            if confirm_dialog:
-                MessageDialog.show_info(
-                    f"{config.BANK_SHORT} | SUCCESS",
-                    f"Transfer successful!\n\n"
-                    f"Amount: ₹{amount}\n"
-                    f"To: {result['recipient']}\n"
-                    f"Balance: ₹{result['new_balance']:.2f}"
-                )
-                self.window.destroy()
-                self.on_success()
+            self.window.destroy()
+            self.on_success()
         except (ValidationError, InvalidAccountError, InsufficientFundsError) as e:
             MessageDialog.show_error(f"{config.BANK_SHORT} | ERROR", e.message)
             self._clear_fields()

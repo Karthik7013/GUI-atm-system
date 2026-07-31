@@ -1,4 +1,5 @@
 import sqlite3
+from utils.security import hash_pin
 
 
 def init_database(db_path: str) -> None:
@@ -40,5 +41,34 @@ def init_database(db_path: str) -> None:
         ON transactions(user_id, timestamp)
     """)
 
+    _migrate_userdata(cursor, conn)
+
     conn.commit()
     conn.close()
+
+
+def _migrate_userdata(cursor, conn) -> None:
+    cursor.execute(
+        "SELECT name FROM sqlite_master WHERE type='table' AND name='userdata'"
+    )
+    if not cursor.fetchone():
+        return
+
+    cursor.execute(
+        "SELECT Account_no, Name, Pincode, balance FROM userdata"
+    )
+    rows = cursor.fetchall()
+
+    for row in rows:
+        account_no, name, pincode, balance = row
+        try:
+            cursor.execute(
+                "INSERT OR IGNORE INTO users (account_number, name, pin_hash, balance) VALUES (?, ?, ?, ?)",
+                (str(account_no), name, hash_pin(str(pincode)), balance or 0.0)
+            )
+        except sqlite3.IntegrityError:
+            pass
+
+    cursor.execute(
+        "DROP TABLE IF EXISTS userdata"
+    )
